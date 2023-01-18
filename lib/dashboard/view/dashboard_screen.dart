@@ -7,7 +7,9 @@ import 'package:coligo/dashboard/view/widgets/subtitle.dart';
 import 'package:coligo/dashboard/viewModel/dashboad_controller.dart';
 import 'package:coligo/utils/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
+import 'package:get_storage/get_storage.dart';
 
 class DashboardScreen extends StatelessWidget {
   final Widget? content;
@@ -28,54 +30,64 @@ class DashboardScreen extends StatelessWidget {
           return Scaffold(
             key: _globalKey,
             backgroundColor: AppColors.background,
-            appBar: AppBar(
-              title: Text(
-                "Welcome Talia",
-                style: Theme.of(context)
-                    .textTheme
-                    .headline5!
-                    .copyWith(fontWeight: FontWeight.bold),
-              ),
-              actions: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
-                  child: Icon(
-                    Icons.search,
-                    color: Theme.of(context).colorScheme.primary,
-                    size: 30,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
-                  child: Icon(
-                    Icons.notifications,
-                    color: Theme.of(context).colorScheme.primary,
-                    size: 30,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
-                  child: Icon(
-                    Icons.mail_outline_outlined,
-                    color: Theme.of(context).colorScheme.primary,
-                    size: 30,
-                  ),
-                ),
-              ],
-              leading: Builder(
-                builder: (BuildContext context) {
-                  return IconButton(
-                      onPressed: () {
-                        _globalKey.currentState!.openDrawer();
+            appBar: GetStorage().read("isLogin") != null &&
+                    GetStorage().read("isLogin") == true
+                ? AppBar(
+                    title: Text(
+                      "Welcome Talia",
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline5!
+                          .copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    actions: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 5),
+                        child: Icon(
+                          Icons.search,
+                          color: Theme.of(context).colorScheme.primary,
+                          size: 30,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 5),
+                        child: Icon(
+                          Icons.notifications,
+                          color: Theme.of(context).colorScheme.primary,
+                          size: 30,
+                        ),
+                      ),
+                      InkWell(
+                        onTap: (() {
+                          GetStorage().write("isLogin", false);
+                          print("login2: ${GetStorage().read("isLogin")}");
+                          Get.toNamed("/");
+                        }),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 5),
+                          child: Icon(
+                            Icons.logout,
+                            color: Theme.of(context).colorScheme.primary,
+                            size: 30,
+                          ),
+                        ),
+                      ),
+                    ],
+                    leading: Builder(
+                      builder: (BuildContext context) {
+                        return IconButton(
+                            onPressed: () {
+                              _globalKey.currentState!.openDrawer();
+                            },
+                            icon: const Icon(
+                              Icons.sort,
+                              size: 30.0,
+                              color: AppColors.indigo,
+                            ));
                       },
-                      icon: const Icon(
-                        Icons.sort,
-                        size: 30.0,
-                        color: AppColors.indigo,
-                      ));
-                },
-              ),
-            ),
+                    ),
+                  )
+                : null,
             drawer: const Menu(),
             body: content ??
                 SafeArea(
@@ -138,7 +150,7 @@ class DashboardScreen extends StatelessWidget {
                                     const SizedBox(width: 16),
                             itemBuilder: (context, index) =>
                                 CardWithTransparentAndBorder(
-                              selected: index == 0,
+                              selected: index % 2 == 0,
                               announcement: cont.announcements[index],
                               onTap: () {},
                             ),

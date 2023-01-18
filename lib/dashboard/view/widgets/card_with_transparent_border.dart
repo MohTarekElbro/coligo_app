@@ -37,7 +37,7 @@ class CardWithTransparentAndBorder extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Icon(
-              Icons.generating_tokens,
+              Icons.person_rounded,
               size: 32,
               color: selected ? secondaryColor : Colors.black,
             ),
